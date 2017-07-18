@@ -46,8 +46,8 @@ namespace check_mail
         //                            "imap.gmail.com",
         //                            993,
         //                            true,
-        //                            "eartherk5yb@gmail.com",
-        //                            "ztlyyzguwntwwrwq"
+        //                            "",
+        //                            ""
         //                        );
 
         //    var emailList = mailRepository.GetAllMails("inbox");
@@ -78,7 +78,7 @@ namespace check_mail
         //        // the XOAUTH2 authentication mechanism.
         //        client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-        //        client.Authenticate("bhargavak37@gmail.com", "raxlgsnjjbkjcqkv");
+        //        client.Authenticate("", "");
         //       // The Inbox folder is always available on all IMAP servers...
         //       var inbox = client.Inbox;
         //       inbox.Open(FolderAccess.ReadOnly);
@@ -96,30 +96,7 @@ namespace check_mail
         //        client.Disconnect(true);
         //    }
         //}
-        //static void POP3_Check_Msg() {
-        //    using (var client = new Pop3Client())
-        //    {
-        //        // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
-        //        client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-
-        //        client.Connect("pop.gmail.com", 995, true);
-
-        //        // Note: since we don't have an OAuth2 token, disable
-        //        // the XOAUTH2 authentication mechanism.
-        //        client.AuthenticationMechanisms.Remove("XOAUTH2");
-
-        //        client.Authenticate(uname, password);
-
-        //        for (int i = 0; i < client.Count; i++)
-        //        {
-        //            var message = client.GetMessage(i);
-        //            Console.WriteLine("Subject: {0}", message.Subject);
-        //            MessageBox.Show(message.Subject);
-        //        }
-
-        //        client.Disconnect(true);
-        //    }
-        //}
+        
         static IMailFolder get_mail()
         {
            
