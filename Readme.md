@@ -1,0 +1,2 @@
+Shout_Mail reads out your daily emails you get on your inbox which are not marked as read ,
+fetches it from IMAP gmail server ,searches mails which have arrived Today,shows them on console, reads them aloud, one by one
