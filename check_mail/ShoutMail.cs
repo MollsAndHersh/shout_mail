@@ -18,7 +18,7 @@ namespace check_mail
         private static string mail_server;
         public static int port;
         public static bool use_SSL;
-        ShoutMail()
+      static ShoutMail()
         {
             client = new MailKit.Net.Imap.ImapClient();
             uname = Constants.uname;
@@ -28,72 +28,74 @@ namespace check_mail
             use_SSL = Constants.use_SSL;
 
         }
-
+      
+        
 
         static void Main(string[] args)
         {
+            //new ShoutMail();
             // POP3_Check_Msg();
-            // search_mail();
+             search_mail();
             // ReadImap();
-            Imap_Check_Msg();
+            //Imap_Check_Msg();
 
         }
-        public static void ReadImap()
-        {
-            var mailRepository = new MailRepository(
-                                    "imap.gmail.com",
-                                    993,
-                                    true,
-                                    "eartherk5yb@gmail.com",
-                                    "ztlyyzguwntwwrwq"
-                                );
+        //public static void ReadImap()
+        //{
+        //    var mailRepository = new MailRepository(
+        //                            "imap.gmail.com",
+        //                            993,
+        //                            true,
+        //                            "eartherk5yb@gmail.com",
+        //                            "ztlyyzguwntwwrwq"
+        //                        );
 
-            var emailList = mailRepository.GetAllMails("inbox");
+        //    var emailList = mailRepository.GetAllMails("inbox");
 
-            foreach (Message email in emailList)
-            {
-                Console.WriteLine("<p>{0}: {1}</p><p>{2}</p>", email.From, email.Subject, email.BodyHtml.Text);
-                Console.Read();
-                if (email.Attachments.Count > 0)
-                {
-                    foreach (MimePart attachment in email.Attachments)
-                    {
-                        Console.WriteLine("<p>Attachment: {0} {1}</p>", attachment.ContentBase, attachment.ContentType.MimeType);
-                    }
-                }
-            }
-        }
-        static void Imap_Check_Msg() {
+        //    foreach (Message email in emailList)
+        //    {
+        //        Console.WriteLine("<p>{0}: {1}</p><p>{2}</p>", email.From, email.Subject, email.BodyHtml.Text);
+        //        Console.Read();
+        //        if (email.Attachments.Count > 0)
+        //        {
+        //            foreach (MimePart attachment in email.Attachments)
+        //            {
+        //                Console.WriteLine("<p>Attachment: {0} {1}</p>", attachment.ContentBase, attachment.ContentType.MimeType);
+        //            }
+        //        }
+        //    }
+        //}
+        //static void Imap_Check_Msg() {
 
-            using (var client = new MailKit.Net.Imap.ImapClient())
-            {
-                // For demo-purposes, accept all SSL certificates
-                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+        //    using (var client = new MailKit.Net.Imap.ImapClient())
+        //    {
+        //        // For demo-purposes, accept all SSL certificates
+        //        client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-                client.Connect("imap.gmail.com", 993, true);
+        //        client.Connect("imap.gmail.com", 993, true);
 
-                // Note: since we don't have an OAuth2 token, disable
-                // the XOAUTH2 authentication mechanism.
-                client.AuthenticationMechanisms.Remove("XOAUTH2");
+        //        // Note: since we don't have an OAuth2 token, disable
+        //        // the XOAUTH2 authentication mechanism.
+        //        client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-                client.Authenticate("bhargavak37@gmail.com", "raxlgsnjjbkjcqkv");
-               // The Inbox folder is always available on all IMAP servers...
-               var inbox = client.Inbox;
-               inbox.Open(FolderAccess.ReadOnly);
+        //        client.Authenticate("bhargavak37@gmail.com", "raxlgsnjjbkjcqkv");
+        //       // The Inbox folder is always available on all IMAP servers...
+        //       var inbox = client.Inbox;
+        //       inbox.Open(FolderAccess.ReadOnly);
 
-              Console.WriteLine("Total messages: {0}", inbox.Count);
-                Console.WriteLine("Recent messages: {0}", inbox.Recent);
+        //      Console.WriteLine("Total messages: {0}", inbox.Count);
+        //        Console.WriteLine("Recent messages: {0}", inbox.Recent);
 
-                for (int i = 0; i < inbox.Count; i++)
-                {
-                    var message = inbox.GetMessage(i);
-                    Console.WriteLine("Subject: {0}", message.Subject);
-                    //MessageBox.Show(message.Subject);
-                }
+        //        for (int i = 0; i < inbox.Count; i++)
+        //        {
+        //            var message = inbox.GetMessage(i);
+        //            Console.WriteLine("Subject: {0}", message.Subject);
+        //            //MessageBox.Show(message.Subject);
+        //        }
 
-                client.Disconnect(true);
-            }
-        }
+        //        client.Disconnect(true);
+        //    }
+        //}
         //static void POP3_Check_Msg() {
         //    using (var client = new Pop3Client())
         //    {
@@ -118,30 +120,36 @@ namespace check_mail
         //        client.Disconnect(true);
         //    }
         //}
-        static void search_mail()
+        static IMailFolder get_mail()
         {
-            var client = new MailKit.Net.Imap.ImapClient();
+           
+            IMailFolder inbox_data=null;
             try
             {
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
                 client.Connect(Constants.mail_server, Constants.port, Constants.use_SSL);
-                // Note: since we don't have an OAuth2 token, disable
-                // the XOAUTH2 authentication mechanism.
-                //client.AuthenticationMechanisms.Remove("XOAUTH2");
-                client.Authenticate(Constants.uname, Constants.password1);
-                // The Inbox folder is always available on all IMAP servers...
-                var inbox = client.Inbox;
+                client.Authenticate(uname,password);
+              var inbox = client.Inbox;
                 inbox.Open(FolderAccess.ReadWrite);
-                //var query = SearchQuery.DeliveredAfter(DateTime.Parse("2017-06-28"))
-                //.And(SearchQuery.SubjectContains("*"))
-                //.And(SearchQuery.Answered);
-                Console.Write(DateTime.Today);
+               inbox_data = inbox;
+               
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
+            return inbox_data;
+        }
+        static void search_mail()
+        {
+            try
+            {
+                var inbox = get_mail();
                 foreach (var uid in inbox.Search(SearchQuery.NotSeen.And(SearchQuery.DeliveredOn(DateTime.Today))))
                 {
                     var message = inbox.GetMessage(uid);
-                    Console.WriteLine("[match] {0}: {1}", uid, message.Subject);
-                    MessageBox.Show(message.Subject.ToString());
-                    Shout_Mail(message);
+                    Display_Mail(message, uid);
                     inbox.AddFlags(uid, MessageFlags.Seen, true);
                 }
             }
@@ -149,18 +157,24 @@ namespace check_mail
             {
                 MessageBox.Show(e.Message);
             }
-
-            finally {
+            finally
+            {
                 client.Disconnect(true);
             }
-            /*  foreach (var summary in inbox.Fetch(0, 7, MessageSummaryItems.Full | MessageSummaryItems.UniqueId))
-              {
-                  Console.WriteLine("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
-                  // MessageBox.Show(summary.Envelope.Subject.ToString());
-              }*/
-
         }
-  static void Shout_Mail(MimeMessage message)
+        static void Display_Mail(MimeMessage message,UniqueId uid) {
+            try
+            {
+                Console.WriteLine("[match] {0}: {1}", uid, message.Subject);
+                //MessageBox.Show(message.Subject.ToString());
+                Speak_Mail(message);
+            }
+            catch (Exception e)
+            {
+               MessageBox.Show(e.Message);
+            }
+        }
+  static void Speak_Mail(MimeMessage message)
         {
             using (SpeechSynthesizer synth =
    new SpeechSynthesizer())
